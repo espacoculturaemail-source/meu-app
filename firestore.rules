@@ -1,0 +1,36 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function isValidQuizResult(data) {
+      return data.userName is string && data.userName.size() > 0 && data.userName.size() <= 200
+          && data.userEmail is string && data.userEmail.size() > 0 && data.userEmail.size() <= 200
+          && data.userEmail.matches('^[^@]+@[^@]+\\.[^@]+$')
+          && data.areaDominante is string
+          && data.createdAt == request.time;
+    }
+
+    match /results/{resultId} {
+      allow create: if isValidId(resultId) && isValidQuizResult(incoming());
+      allow get: if true; // In a production app, we would restrict this more, but for this flow we need to retrieve it by ID
+      // Update allowed only for simulated "payment" activation in this demo/microsystem context if needed, 
+      // but usually payment status is updated via Admin SDK. 
+      // For this applet, we'll allow a specific update if the user has the ID and knows what they are doing.
+      allow update: if incoming().diff(resource.data).affectedKeys().hasOnly(['hasPaid']) && incoming().hasPaid == true;
+    }
+  }
+}

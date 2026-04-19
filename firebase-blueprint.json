@@ -1,0 +1,41 @@
+{
+  "entities": {
+    "quizResult": {
+      "title": "Quiz Result",
+      "description": "Data from a quiz attempt including answers and AI analysis.",
+      "type": "object",
+      "properties": {
+        "userName": { "type": "string", "description": "User's full name" },
+        "userEmail": { "type": "string", "format": "email", "description": "User's email" },
+        "areaDominante": { "type": "string", "description": "Identified life area" },
+        "respostas": { "type": "object", "description": "Map of question IDs to scores" },
+        "textoAberto": { "type": "string", "description": "User's open response" },
+        "analiseSimplificada": { 
+          "type": "object",
+          "properties": {
+            "intensidade": { "type": "string" },
+            "tempo": { "type": "string" }
+          }
+        },
+        "relatorioIA": {
+          "type": "object",
+          "properties": {
+            "diagnostico": { "type": "string" },
+            "erroPrincipal": { "type": "string" },
+            "acaoImediata": { "type": "array", "items": { "type": "string" } },
+            "fraseImpactante": { "type": "string" }
+          }
+        },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "hasPaid": { "type": "boolean" }
+      },
+      "required": ["userName", "userEmail", "areaDominante", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/results/{resultId}": {
+      "schema": "quizResult",
+      "description": "Storage for quiz results."
+    }
+  }
+}
