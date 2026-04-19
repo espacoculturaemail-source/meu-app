@@ -7,6 +7,9 @@ export default async function handler(req: any, res: any) {
     const data = req.body;
 
     console.log("Webhook recebido:", data);
+    if (data.type === "payment") {
+  console.log("Pagamento detectado");
+}
 
     // Aqui você pode validar o pagamento depois (status approved)
 
