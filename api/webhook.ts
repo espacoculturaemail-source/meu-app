@@ -7,15 +7,14 @@ export default async function handler(req: any, res: any) {
     const data = req.body;
 
     console.log("Webhook recebido:", data);
-    if (data.type === "payment") {
+if (data.type === "payment") {
   console.log("Pagamento detectado");
 }
 
-    // Aqui você pode validar o pagamento depois (status approved)
+return res.status(200).json({ received: true });
 
-    return res.status(200).json({ received: true });
-  } catch (error) {
-    console.error("Erro no webhook:", error);
-    return res.status(500).json({ error: "Erro interno" });
-  }
+} catch (error) {
+  console.error("Erro no webhook:", error);
+  return res.status(500).json({ error: "Erro interno" });
+}
 }
