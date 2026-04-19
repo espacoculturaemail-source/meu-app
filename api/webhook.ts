@@ -7,14 +7,28 @@ export default async function handler(req: any, res: any) {
     const data = req.body;
 
     console.log("Webhook recebido:", data);
-if (data.type === "payment") {
-  console.log("Pagamento detectado");
-}
 
-return res.status(200).json({ received: true });
+    if (data.type === "payment") {
+      const paymentId = data.data.id;
 
-} catch (error) {
-  console.error("Erro no webhook:", error);
-  return res.status(500).json({ error: "Erro interno" });
-}
+      const response = await fetch(https://api.mercadopago.com/v1/payments/${paymentId}, {
+        headers: {
+          Authorization: Bearer SEU_ACCESS_TOKEN
+        }
+      });
+
+      const payment = await response.json();
+
+      console.log("Status do pagamento:", payment.status);
+
+      if (payment.status === "approved") {
+        console.log("Pagamento APROVADO");
+      }
+    }
+
+    return res.status(200).json({ received: true });
+  } catch (error) {
+    console.error("Erro no webhook:", error);
+    return res.status(500).json({ error: "Erro interno" });
+  }
 }
